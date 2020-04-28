@@ -11,10 +11,9 @@ form.addEventListener("submit", function(e){
   axios.get('https://still-spire-37210.herokuapp.com/positions.json', { params: { description: `${description}`, location: `${location}`, full_time: `${full_time}`  } })
     .then((res) => {     
       for(let i = 0; i < res.data.length; i++){
-        document.querySelector('#job-pannel').insertAdjacentHTML("beforeend",addTemplate(res.data[i]));  
+        document.querySelector('#job-pannel').innerHTML += addTemplate(res.data[i]);  
       }
      })
-    .catch((error) => { console.error(error) })
 
 }, false)
 
