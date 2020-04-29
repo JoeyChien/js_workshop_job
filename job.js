@@ -1,13 +1,17 @@
 let form = document.forms[0];
 let page = 2;
 let nextPage = document.querySelector('.pagination-next');
-let description = form.elements.description.value;
-let location = form.elements.location.value;
-let full_time = form.elements.full_time.checked;
+// let description = form.elements.description.value;
+// let location = form.elements.location.value;
+// let full_time = form.elements.full_time.checked;
 
 
 form.addEventListener("submit", function(e){
   e.preventDefault();
+  let description = form.elements.description.value;
+  let location = form.elements.location.value;
+  let full_time = form.elements.full_time.checked;
+
   document.querySelector('#job-pannel').innerHTML = "";  
   full_time = full_time ? "on" : ""  
 
@@ -16,22 +20,26 @@ form.addEventListener("submit", function(e){
       for(let i = 0; i < res.data.length; i++){
         document.querySelector('#job-pannel').innerHTML += addTemplate(res.data[i]);        
       }
-      if(res.data.length == 50 ){
-        document.querySelector('.pagination-next').removeAttribute('disabled');
+      if(res.data.length === 50 ){
+        document.querySelector('.pagination-next').removeAttribute("disabled");
       } 
     }) 
   }, false)
 
 nextPage.addEventListener("click", function(e){
   e.preventDefault();
+  let description = form.elements.description.value;
+  let location = form.elements.location.value;
+  let full_time = form.elements.full_time.checked;
+
   axios.get('https://still-spire-37210.herokuapp.com/positions.json', { params: { description: `${description}`, location: `${location}`, full_time: `${full_time}`,page: `${page++}`} })
     .then((res) => {     
       for(let i = 0; i < res.data.length; i++){
         document.querySelector('#job-pannel').innerHTML += addTemplate(res.data[i]);        
       }
-      if(res.data.length == 50 ){
-        document.querySelector('.pagination-next').removeAttribute('disabled');
-      } 
+      if(res.data.length < 50 ){
+        document.querySelector('.pagination-next').setAttribute("disabled", true);
+      }
     }) 
   }, false)
 
