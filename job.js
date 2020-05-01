@@ -1,48 +1,44 @@
 let form = document.forms[0];
-let page = 2;
+let page = 1;
 let nextPage = document.querySelector('.pagination-next');
-// let description = form.elements.description.value;
-// let location = form.elements.location.value;
-// let full_time = form.elements.full_time.checked;
 
+window.onload = function() {
+  getaxios()
+};
 
 form.addEventListener("submit", function(e){
+  //阻止超連結送出去，暫停在原地
   e.preventDefault();
+  document.querySelector('#job-pannel').innerHTML = "";  
+  getaxios()
+}, false)
+
+nextPage.addEventListener("click", function(e){
+  //防止事件冒泡
+  e.stopPropagation();
+  getaxios()
+}, false)
+
+function getaxios(){
   let description = form.elements.description.value;
   let location = form.elements.location.value;
   let full_time = form.elements.full_time.checked;
-
-  document.querySelector('#job-pannel').innerHTML = "";  
   full_time = full_time ? "on" : ""  
 
-  axios.get('https://still-spire-37210.herokuapp.com/positions.json', { params: { description: `${description}`, location: `${location}`, full_time: `${full_time}`  } })
+  axios.get('https://still-spire-37210.herokuapp.com/positions.json', { params: { description: `${description}`, location: `${location}`, full_time: `${full_time}`, page: `${page++}`} })
     .then((res) => {     
+      console.log(res.data.length)
       for(let i = 0; i < res.data.length; i++){
         document.querySelector('#job-pannel').innerHTML += addTemplate(res.data[i]);        
       }
       if(res.data.length === 50 ){
         document.querySelector('.pagination-next').removeAttribute("disabled");
-      } 
+      }else if(res.data.length < 50 ){
+          document.querySelector('.pagination-next').setAttribute("disabled", true);
+          page = 1;
+        }
     }) 
-  }, false)
-
-nextPage.addEventListener("click", function(e){
-  e.preventDefault();
-  let description = form.elements.description.value;
-  let location = form.elements.location.value;
-  let full_time = form.elements.full_time.checked;
-
-  axios.get('https://still-spire-37210.herokuapp.com/positions.json', { params: { description: `${description}`, location: `${location}`, full_time: `${full_time}`,page: `${page++}`} })
-    .then((res) => {     
-      for(let i = 0; i < res.data.length; i++){
-        document.querySelector('#job-pannel').innerHTML += addTemplate(res.data[i]);        
-      }
-      if(res.data.length < 50 ){
-        document.querySelector('.pagination-next').setAttribute("disabled", true);
-      }
-    }) 
-  }, false)
-
+}
 
 
 function addTemplate(data){
@@ -58,8 +54,7 @@ function addTemplate(data){
       <td class="meta">
         <span class="location">${data.location}</span>
       </td>
-    </tr>`;
-  
+    </tr>`;  
 }
 
 
